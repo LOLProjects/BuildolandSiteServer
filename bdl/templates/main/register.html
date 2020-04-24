@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block main %}
+<form name="register" method="POST">
+	<p>
+		<label for="code">Code</label>
+		<input type="code" name="code" placeholder="XXX-XXX-XX" autofocus required>
+	</p>
+	<p>
+		<label for="email">Email</label>
+		<input name="email" placeholder="Guigui220D@example.com" type="email" required>
+	</p>
+	<p>
+		<!-- Add check -->
+		<label for="username">Username</label>
+		<input id="username" oninvalid="validateUsername(this)" pattern="[0-9A-Za-z-_]+" maxlength="16" name="username" placeholder="Guigui220D" required>
+	</p>
+	<p>
+		<label for="password">Password</label>
+		<input type="password" name="password" required>
+	</p>
+	<p><input id="submit" type="submit" value="Register"></p>
+</form>
+{% endblock %}

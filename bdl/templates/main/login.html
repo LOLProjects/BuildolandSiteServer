@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<form name="login" method="POST">
+	<p>
+		<label for="email">Email</label>
+		<input name="email" type="email" placeholder="Guigui220D@example.com" required>
+	</p>
+	<p>
+		<label for="password">Password</label>
+		<input type="password" name="password" required>
+	</p>
+	<p><a class="blue" href="{{ url_for('main.forgotPass') }}">Forgot password?</a></p>
+	<p><input id="submit" type="submit" value="Login"></p>
+</form>
+
+{% endblock %}

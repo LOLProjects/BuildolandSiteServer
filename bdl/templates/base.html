@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Buildoland Site</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='general.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='form.css') }}">
+</head>
+<body>
+	<header>
+		<a class="underline" href="{{ url_for('main.index') }}"><img id="logo" src="{{ url_for('static', filename='images/Logov2.png') }}" alt="Buildoland logo"></a>
+		<p class="underline blue"><a class="blue" href="{{ url_for('main.login') }}">Login</a></p>
+		<p class="underline blue"><a class="blue" href="{{ url_for('main.register') }}">Register</a></p>
+	</header>
+	<div id="main" class="center">
+		<h1 id="title" class="green outline">Buildoland Alpha</h1>
+		{% block main %}{% endblock %}
+		<footer>
+			<p class="darkBlue">Need help? Want to send your thanks? Email us here! <<a class="blue" href="mailto:amrojjeh@gmail.com">amrojjeh@gmail.com</a>></p>
+		</footer>
+	</div>
+</body>
+</html>
