@@ -10,7 +10,7 @@ from bdl.db import get_db, init_db
 def sql_script():
 	data_sql = None
 
-	with open(os.path.join(os.path.dirname(__FILE__), "data.sql"), "rb") as f:
+	with open(os.path.join(os.path.dirname(__file__), "data.sql"), "rb") as f:
 		data_sql = f.read().decode("utf8")
 
 	return data_sql
@@ -23,6 +23,9 @@ def app():
 		"DATABASE": db_path
 		})
 
+	with app.app_context():
+		init_db()
+
 	yield app
 
 	os.close(db_handle)
@@ -33,6 +36,7 @@ def appWdata(app, sql_script):
 	with app.app_context():
 		db = get_db()
 		db.executescript(sql_script)
+	return app
 
 @pytest.fixture
 def client(app):
@@ -41,3 +45,7 @@ def client(app):
 @pytest.fixture
 def cli_runner(app):
 	return app.test_cli_runner()
+
+@pytest.fixture
+def cli_runnerWdata(appWdata):
+	return appWdata.test_cli_runner()
