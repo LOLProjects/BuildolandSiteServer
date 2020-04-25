@@ -1,14 +1,14 @@
 Buildoland TODOs
 
------	Make primary keys random
-+---	Finish cli commands to modify token db
----	Add testing
-	+----	Test cli commands
-	----	Test register site: But first add the test cli commands
+-5	Make primary keys random
++-3	Finish cli commands to modify token db
+-3	Add testing
+	+-4	Test cli commands
+	-4	Test register site: But first add the test cli commands
 	-	Test login site
 -	Add change password
 -	Allow username change
 -	add-code should accept variadic arguments
----	Finish login site
---	Finish forgot pass
-----	Finish register site: First finish the tests
+-3	Finish login site
+-2	Finish forgot pass
+-4	Finish register site: First finish the tests
