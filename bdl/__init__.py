@@ -22,13 +22,20 @@ def create_app(test_config=None):
 	except OSError:
 		pass
 
-	print(colorama.Fore.RED + "Secret: " + app.config["SECRET_KEY"] + colorama.Style.RESET_ALL)
+	# print(colorama.Fore.RED + "Secret: " + app.config["SECRET_KEY"] + colorama.Style.RESET_ALL)
 
-	from . import db
-	db.init_app(app)
+	# Add blueprints
 
 	from . import main
 	app.register_blueprint(main.bp)
 	app.add_url_rule("/", endpoint="index")
 
+	init_app(app)
+
 	return app
+
+def init_app(app):
+	from . import db
+	from . import cli
+	app.teardown_appcontext(db.close_db)
+	app.cli.add_command(cli.init_db_command)
