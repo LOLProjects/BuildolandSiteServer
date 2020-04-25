@@ -1,0 +1,13 @@
+Buildoland TODOs
+
+-----	Make primary keys random
+---	Finish cli commands to modify token db
+---	Add testing
+	----	Test cli commands
+	----	Test register site: But first add the test cli commands
+	-	Test login site
+-	Add change password
+-	Allow username change
+---	Finish login site
+--	Finish forgot pass
+----	Finish register site: First finish the tests
