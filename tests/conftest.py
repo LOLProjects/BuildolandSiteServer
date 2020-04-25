@@ -6,7 +6,6 @@ import pytest
 from bdl import create_app
 from bdl.db import get_db, init_db
 
-@pytest.fixture
 def sql_script():
 	data_sql = None
 
@@ -14,6 +13,11 @@ def sql_script():
 		data_sql = f.read().decode("utf8")
 
 	return data_sql
+
+def fill_db(app):
+	with app.app_context():
+		db = get_db()
+		db.executescript(sql_script())
 
 @pytest.fixture
 def app():
@@ -32,20 +36,9 @@ def app():
 	os.unlink(app.config["DATABASE"])
 
 @pytest.fixture
-def appWdata(app, sql_script):
-	with app.app_context():
-		db = get_db()
-		db.executescript(sql_script)
-	return app
-
-@pytest.fixture
 def client(app):
 	return app.test_client()
 
 @pytest.fixture
 def cli_runner(app):
 	return app.test_cli_runner()
-
-@pytest.fixture
-def cli_runnerWdata(appWdata):
-	return appWdata.test_cli_runner()
