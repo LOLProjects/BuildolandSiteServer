@@ -3,6 +3,7 @@ from flask.cli import with_appcontext
 
 from bdl.db import init_db, get_db
 
+# TODO: Add user, list users, and remove user
 
 @click.command("init-db")
 @with_appcontext
@@ -10,6 +11,7 @@ def init_db_command():
 	init_db()
 	click.echo("Initialized the database.")
 
+# TODO: add-code should accept variadic arguments
 @click.command("add-code")
 @click.argument("codeval")
 @with_appcontext
