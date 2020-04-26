@@ -1,3 +1,5 @@
+<!-- TODO: Add flashes
+-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,8 +10,8 @@
 <body>
 	<header>
 		<a class="underline" href="{{ url_for('main.index') }}"><img id="logo" src="{{ url_for('static', filename='images/Logov2.png') }}" alt="Buildoland logo"></a>
-		<p class="underline blue"><a class="blue" href="{{ url_for('main.login') }}">Login</a></p>
-		<p class="underline blue"><a class="blue" href="{{ url_for('main.register') }}">Register</a></p>
+		<p class="underline blue"><a class="blue" href="{{ url_for('auth.login') }}">Login</a></p>
+		<p class="underline blue"><a class="blue" href="{{ url_for('auth.register') }}">Register</a></p>
 	</header>
 	<div id="main" class="center">
 		<h1 id="title" class="green outline">Buildoland Alpha</h1>
