@@ -83,6 +83,11 @@ p
 	color: #ffeb3b;
 }
 
+.red, .red:hover, .red:active, .red:visited, .red:link
+{
+	color: #e03c3c;
+}
+
 .outline
 {
 	text-shadow:

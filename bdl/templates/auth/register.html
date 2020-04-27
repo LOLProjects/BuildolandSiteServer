@@ -6,27 +6,48 @@ function validateUsername(input)
 {
 	if (input.value.includes(" "))
 		input.setCustomValidity("Spaces aren't allowed")
-	else
+	else if (!input.value.match("[_0-9A-Za-z-]*"))
 		input.setCustomValidity("Only numbers, letters, underscores, and dashes are allowed")
+	else
+		input.setCustomValidity("")		
 }
 </script>
 <form name="register" method="POST">
 	<p>
 		<label for="code">Code</label>
 		<input type="code" name="code" placeholder="XXX-XXX-XX" autofocus required>
+		{% for message in get_flashed_messages() %}
+			{% if "code" in message.lower() %}
+				<p class="red">{{ message }}</p>
+			{% endif %}
+		{% endfor %}
 	</p>
 	<p>
 		<label for="email">Email</label>
 		<input name="email" placeholder="Guigui220D@example.com" type="email" required>
+		{% for message in get_flashed_messages() %}
+			{% if "email" in message.lower() %}
+				<p class="red">{{ message }}</p>
+			{% endif %}
+		{% endfor %}
 	</p>
 	<p>
-		<!-- Add check -->
 		<label for="username">Username</label>
 		<input id="username" oninvalid="validateUsername(this)" pattern="[0-9A-Za-z-_]+" maxlength="16" name="username" placeholder="Guigui220D" required>
+		{% for message in get_flashed_messages() %}
+			{% if "username" in message.lower() %}
+				<p class="red">{{ message }}</p>
+			{% endif %}
+		{% endfor %}
 	</p>
 	<p>
 		<label for="password">Password</label>
 		<input type="password" name="password" required>
+		{% for message in get_flashed_messages() %}
+			{% if "password" in message.lower() %}
+				<p class="red">Password is required</p>
+			{% endif %}
+		{% endfor %}
 	</p>
 	<p><input id="submit" type="submit" value="Register"></p>
 </form>
