@@ -4,7 +4,7 @@ from flask import g
 from werkzeug.security import generate_password_hash
 
 from bdl.db import get_db
-from bdl.code import valid_code, delete_code
+from bdl.code import valid_code, remove_code
 
 class User:
 	def __init__(self, id, email, username, hashed_password, code_used=None):
@@ -58,12 +58,13 @@ def register_user(email, username, password, code=None):
 		return (RegisterResult.INVALID_EMAIL, None)
 
 	# TODO: Send a verification email
+	# TODO: Start a client side email server
 
 	if (code is not None):
 		if (not valid_code(code)):
 			return (RegisterResult.INVALID_CODE, None)
 
-		delete_code(code)
+		remove_code(code)
 
 	hashed_password = generate_password_hash(password)
 	user = add_user(email, username, hashed_password, code)
