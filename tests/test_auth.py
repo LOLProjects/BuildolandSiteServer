@@ -37,8 +37,6 @@ def test_register_normal(app, client):
 	assert person["username"] == "person"
 	assert session["user_id"]== person["id"]
 
-
-# NOTE: Check if code still exists
 def test_register_wrong_code(app, client):
 	fill_db(app)
 	data = {
