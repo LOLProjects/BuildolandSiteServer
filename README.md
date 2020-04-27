@@ -12,18 +12,3 @@ Of course I'm gonna have to cut corners with emails, otherwise I wouldn't be fin
 - I am allowing emails such as yoyo.daug_mate+bdl@mailbox.com. That's about as far as support goes.
 - No, there won't be any `yoyo\@getFooled.idiot@mailbox.com` or `yoyo";';'214ad@@@"@mailbox.com`. Not even sublime recognizes that as email in its syntax highliting, which means I shouldn't.
 And I think that's it. Not that bad afterall
-
-## TODO (13)
-1. bdl/auth.py:12           Add change password
-2. bdl/auth.py:14           Finish login
-3. bdl/auth.py:19           Refactor register
-4. bdl/auth.py:61           Support emails capitals
-5. bdl/auth.py:67           Send a verification email
-6. bdl/auth.py:98           Finish forgot pass
-7. bdl/cli.py:6             Add user, list users, and remove user
-8. bdl/cli.py:14            add-code should accept variadic arguments
-9. bdl/main.py:6            Get user_id from session before each request
-10. bdl/main.py:7           Allow username change
-11. templates/base.html:1   CHANGE BACKGROUND
-12. auth/login.html:4       Login -- Add flashes
-13. auth/register.html:5    Add more precise email syntax
