@@ -9,7 +9,7 @@ def test_init_db_command(cli_runner):
 
 def test_add_code_command(app, cli_runner):
 	fill_db(app)
-	result = cli_runner.invoke(cli.add_code, args=["SpecialCode"])
+	result = cli_runner.invoke(cli.add_code_command, args=["SpecialCode"])
 	assert "Error" not in result.output
 	with app.app_context():
 		db = get_db()
@@ -18,19 +18,19 @@ def test_add_code_command(app, cli_runner):
 
 def test_add_code_command_dup(app, cli_runner):
 	fill_db(app)
-	result = cli_runner.invoke(cli.add_code, args=["123-456-78"])
+	result = cli_runner.invoke(cli.add_code_command, args=["123-456-78"])
 	assert "Error" not in result.output
 	assert "already exists." in result.output
 
 def test_list_codes_command(app, cli_runner):
 	fill_db(app)
-	result = cli_runner.invoke(cli.list_codes)
+	result = cli_runner.invoke(cli.list_codes_command)
 	assert "Error" not in result.output
 	assert "123-456-78" in result.output
 
 def test_remove_code_command(app, cli_runner):
 	fill_db(app)
-	result = cli_runner.invoke(cli.remove_code, args=["123-456-78"])
+	result = cli_runner.invoke(cli.remove_code_command, args=["123-456-78"])
 	assert "Error" not in result.output
 	with app.app_context():
 		db = get_db()
@@ -38,6 +38,6 @@ def test_remove_code_command(app, cli_runner):
 		assert code is None
 
 def test_remove_code_command_not_exist(cli_runner):
-	result = cli_runner.invoke(cli.remove_code, args=["123-456-78"])
+	result = cli_runner.invoke(cli.remove_code_command, args=["123-456-78"])
 	assert "Error" not in result.output
 	assert "doesn't exist" in result.output
