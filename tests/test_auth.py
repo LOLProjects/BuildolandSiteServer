@@ -1,6 +1,18 @@
+import uuid
+from flask import session, g
 from bdl.db import get_db
 import pytest
 from conftest import fill_db
+
+def get_person(app, key, value):
+	with app.app_context():
+		db = get_db()
+		return db.execute(f"SELECT * FROM user WHERE {key}='{value}'").fetchone()
+
+def get_code(app, codeVal):
+	with app.app_context():
+		db = get_db()
+		return db.execute(f"SELECT codeVal FROM code WHERE codeVal='{codeVal}'").fetchone()
 
 def test_register_normal(app, client):
 	fill_db(app)
@@ -9,25 +21,175 @@ def test_register_normal(app, client):
 	assert b"Code" in rv.data
 
 	data = {
-	"code":"123-456-78",
-	"username":"person",
-	"email":"amrojjeh@gmail.com",
-	"password":"person"}
+	"code": "123-456-78",
+	"username": "person",
+	"email": "amrojjeh@gmail.com",
+	"password": "person"}
 
 	rv = client.post("/register", data=data)
 	assert "http://localhost/" == rv.headers["Location"]
 	
+	code = get_code(app, "123-456-78")
+	assert code is None
+
+	person = get_person(app, "username", "person")
+	assert person is not None
+	assert person["username"] == "person"
+	assert session["user_id"]== person["id"]
+
+
+# NOTE: Check if code still exists
+def test_register_wrong_code(app, client):
+	fill_db(app)
+	data = {
+	"code": "124-456-78",
+	"username": "person",
+	"email": "amrojjeh@gmail.com",
+	"password": "person"}
+
+	rv = client.post("/register", data=data)
+	assert b"Invalid" in rv.data
+
+	# User shan't be registered
+	person = get_person(app, "username", "person")
+	assert person is None
+
+def test_register_no_code(app, client):
+	fill_db(app)
+	data = {
+	"code": "",
+	"username": "person",
+	"email": "amrojjeh@gmail.com",
+	"password": "person"}
+
+	rv = client.post("/register", data=data)
+	assert b"Invalid" in rv.data
+
+	# User shan't be registered
+	person = get_person(app, "username", "person")
+	assert person is None
+
+def test_register_dup_user(app, client):
+	fill_db(app)
+	data = {
+	"code": "123-456-78",
+	"username": "test",
+	"email": "amrojjeh@gmail.com",
+	"password": "person"}
+
+	rv = client.post("/register", data=data)
+	assert b"Username is taken" in rv.data
+
+	person = get_person(app, "email", "amrojjeh@gmail.com")
+	assert person is None
+
+	code = get_code(app, "123-456-78")
+	assert code is not None
+
+def test_register_no_user(app, client):
+	fill_db(app)
+	data = {
+	"code": "123-456-78",
+	"username": "",
+	"email": "amrojjeh@gmail.com",
+	"password": "person"}
+
+	rv = client.post("/register", data=data)
+	assert b"Username is required" in rv.data
+
+	person = get_person(app, "email", "amrojjeh@gmail.com")
+	assert person is None
+
+	code = get_code(app, "123-456-78")
+	assert code is not None
+
+def test_register_invalid_email(app, client):
+	fill_db(app)
+	data = {
+	"code": "123-456-78",
+	"username": "person",
+	"email": "amrojjeh@gmail",
+	"password": "person"}
+
+	rv = client.post("/register", data=data)
+	assert b"Invalid email" in rv.data
+
+	# User shan't be registered
+	# Code shouldn't be deleted
+	person = get_person(app, "email", "amrojjeh@gmail")
+	assert person is None
+	code = get_code(app, "123-456-78")
+	assert code is not None
+
+def test_register_invalid_email(app, client):
+	fill_db(app)
+	data = {
+	"code": "123-456-78",
+	"username": "person",
+	"email": "amrojjeh@gmail",
+	"password": "person"}
+
+	rv = client.post("/register", data=data)
+	assert b"Invalid email" in rv.data
+
+	person = get_person(app, "email", "amrojjeh@gmail")
+	assert person is None
+	code = get_code(app, "123-456-78")
+	assert code is not None
+
+def test_register_same_uuid(app, client):
+	fill_db(app)
+	data = {
+	"code": "123-456-78",
+	"username": "person",
+	"email": "amrojjeh@gmail.com",
+	"password": "person"
+	}
+
 	with app.app_context():
-		db = get_db()
-		code = db.execute("SELECT codeVal FROM code WHERE codeVal='123-456-78'").fetchone()
+		g.test_user_id = uuid.UUID(int=get_person(app, "username", "test")["id"])
+		rv = client.post("/register", data=data)
+
+		assert "http://localhost/" == rv.headers["Location"]
+		
+		code = get_code(app, "123-456-78")
 		assert code is None
-		person = db.execute("SELECT username FROM user WHERE username='person'").fetchone()
+
+		person = get_person(app, "username", "person")
+		assert person is not None
 		assert person["username"] == "person"
 
-# TODO: Add more tests
+		assert session["user_id"]== person["id"]
+		assert person["id"] != get_person(app, "username", "test")["id"]
 
-def test_register_wrong_code(client):
-	pass
+def test_register_no_pass(app, client):
+	fill_db(app)
+	data = {
+	"code": "123-456-78",
+	"username": "person",
+	"email": "amrojjeh@gmail.com",
+	"password": ""}
 
-def test_register_dup(client):
-	pass
+	rv = client.post("/register", data=data)
+	assert b"Password is required" in rv.data
+
+	person = get_person(app, "email", "amrojjeh@gmail.com")
+	assert person is None
+	code = get_code(app, "123-456-78")
+	assert code is not None
+
+# For things such as amrojjeh+bdl@gmail.com
+def test_register_email_plus(app, client):
+	fill_db(app)
+	data = {
+	"code": "123-456-78",
+	"username": "person",
+	"email": "amrojjeh+bdl@gmail.com",
+	"password": "person"}
+
+	rv = client.post("/register", data=data)
+
+	person = get_person(app, "email", "amrojjeh+bdl@gmail.com")
+	assert person is not None
+	code = get_code(app, "123-456-78")
+	assert code is None
