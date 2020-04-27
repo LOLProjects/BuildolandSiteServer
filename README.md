@@ -17,7 +17,6 @@ And I think that's it. Not that bad afterall
 1. bdl/auth.py:12       Add change password
 2. bdl/auth.py:14       Finish login
 3. bdl/auth.py:19       Refactor register
-4. bdl/auth.py:61       Support emails capitals
 5. bdl/auth.py:67       Send a verification email
 6. bdl/auth.py:98       Finish forgot pass
 7. bdl/cli.py:6         Add user, list users, and remove user
