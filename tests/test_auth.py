@@ -76,7 +76,7 @@ def test_register_dup_user(app, client):
 	"password": "person"}
 
 	rv = client.post("/register", data=data)
-	assert b"Username is taken" in rv.data
+	assert b"Username taken" in rv.data
 
 	person = get_person(app, "email", "amrojjeh@gmail.com")
 	assert person is None
