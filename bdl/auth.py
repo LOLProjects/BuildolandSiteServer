@@ -6,7 +6,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from bdl.db import get_db
 from bdl.user import RegisterResult, register_user
 
-
 bp = Blueprint("auth", __name__, url_prefix="")
 
 # TODO: Add change password

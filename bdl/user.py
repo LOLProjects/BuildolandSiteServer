@@ -20,7 +20,6 @@ class RegisterResult:
 	INVALID_EMAIL = 2
 	INVALID_CODE = 3
 
-
 # generates a new UUIDv4 for a new user
 def new_uuid():
 	db = get_db()
@@ -50,8 +49,8 @@ def add_user(email, username, hashed_password, code_used=None):
 	db.commit()
 	return User(user_id, email, username, hashed_password, code_used)
 
-# Returns True if it ran successfully
 def register_user(email, username, password, code=None):
+	"""Registers the user, returns (errorCode, user)"""
 	if (not unique_username(username)):
 		return (RegisterResult.USERNAME_TAKEN, None)
 
@@ -67,4 +66,5 @@ def register_user(email, username, password, code=None):
 		delete_code(code)
 
 	hashed_password = generate_password_hash(password)
-	return (RegisterResult.SUCCESS, add_user(email, username, hashed_password, code))
+	user = add_user(email, username, hashed_password, code)
+	return (RegisterResult.SUCCESS, user)
