@@ -6,7 +6,8 @@ CREATE TABLE user(
 	email TEXT UNIQUE NOT NULL,
 	username TEXT UNIQUE NOT NULL,
 	password TEXT NOT NULL,
-	code_used TEXT UNIQUE
+	code_used TEXT,
+	verified INT
 );
 
 CREATE TABLE code(
