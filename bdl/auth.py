@@ -17,6 +17,14 @@ def login():
 	return render_template("auth/login.html")
 
 # TODO: Refactor register
+''' Some notable things about emails:
+- email@mailbox.com is different from email@mailBOX.com but
+- EMAIL@mailbox.com is the same as email@mailbox.com
+- I'm not gonna worry myself about that, instead:
+- All emails are going to be lowered to lowercase on submittion
+So if a mailbox is GMAIL, this app will handle it as gmail instead of GMAIL
+That way all parts of the email are case insensitive
+'''
 @bp.route("/register", methods=("GET", "POST"))
 def register():
 	if request.method == "GET":
@@ -24,7 +32,7 @@ def register():
 	code = request.form["code"]
 	username = request.form["username"]
 	password = request.form["password"]
-	email = request.form["email"]
+	email = request.form["email"].lower()
 	user_id = get_new_uuid().bytes
 	errors = None
 
