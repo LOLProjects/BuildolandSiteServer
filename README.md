@@ -7,7 +7,7 @@ Of course I'm gonna have to cut corners with emails, otherwise I wouldn't be fin
 
 - test@mailbox.com is different from test@MAILBOX.com, but TEST@mailbox.com is the same as test@mailbox.com, not here mate.
 - ALL emails will be read as their lowercase equivalents. So GMAIL will be read as gmail, sorry GMAIL.
-- The `+` icon in one such as test+bdl@mailbox.com should be supported and treated the same as test@mailbox.com. I've not been able to test it yet since we've not openned an account for bdl
+- The `+` icon in one such as test+bdl@mailbox.com should be supported and treated the same as test@mailbox.com. I've not been able to test it yet since we've not opened an account for bdl
 - The outerlevle domain (.com or .org) can only be in 2-4 length. So no test@mailbox.hello, only hell is allowed (No they won't be cut short, it will return an error, that was just a joke)
 - I am allowing emails such as yoyo.daug_mate+bdl@mailbox.com. That's about as far as support goes.
 - No, there won't be any `yoyo\@getFooled.idiot@mailbox.com` or `yoyo";';'214ad@@@"@mailbox.com`. Not even sublime recognizes that as email in its syntax highliting, which means I shouldn't.
