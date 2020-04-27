@@ -16,7 +16,6 @@ bp = Blueprint("auth", __name__, url_prefix="")
 def login():
 	return render_template("auth/login.html")
 
-# TODO: Refactor register
 @bp.route("/register", methods=("GET", "POST"))
 def register():
 	def error(msg):
