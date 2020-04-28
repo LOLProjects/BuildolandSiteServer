@@ -243,7 +243,7 @@ def test_login_wrong_pass(app, client):
 
 	rv = client.post("/login", data=data)
 	assert rv.status_code == 200
-	assert b"Incorrect username or password" in rv.data
+	assert b"Incorrect email or password" in rv.data
 
 def test_login_wrong_email(app, client):
 	fill_db(app)
@@ -254,7 +254,7 @@ def test_login_wrong_email(app, client):
 
 	rv = client.post("/login", data=data)
 	assert rv.status_code == 200
-	assert b"Incorrect username or password" in rv.data
+	assert b"Incorrect email or password" in rv.data
 
 def test_logout(app, client):
 	fill_db(app)

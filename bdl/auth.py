@@ -36,10 +36,10 @@ def login():
 
 	user = get_user(email=email)
 	if user is None:
-		return error("Incorrect username or password")
+		return error("Incorrect email or password")
 
 	if not check_password_hash(user.hashed_password, password):
-		return error("Incorrect username or password")
+		return error("Incorrect email or password")
 
 	session["user_id"] = user.id
 
