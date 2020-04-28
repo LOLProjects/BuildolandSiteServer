@@ -27,6 +27,7 @@ def test_register_normal(app, client):
 	"password": "person"}
 
 	rv = client.post("/register", data=data)
+	assert rv.status_code == 302
 	assert "http://localhost/" == rv.headers["Location"]
 	
 	code = get_code(app, "123-456-78")
@@ -192,4 +193,82 @@ def test_register_email_plus(app, client):
 	code = get_code(app, "123-456-78")
 	assert code is None
 
-# TEST: Login and logout
+def test_login_normal(app, client):
+	fill_db(app)
+	data = {
+		"email": "test@test.com",
+		"password":"test"
+	}
+
+	rv = client.get("/login")
+	assert rv.status_code == 200
+	assert b"Login" in rv.data
+
+	rv = client.post("/login", data=data)
+	assert rv.status_code == 302
+	assert "http://localhost/" == rv.headers["Location"]
+
+	rv = client.get("/")
+	assert b"test" in rv.data
+	assert b"Logout" in rv.data
+
+def test_login_no_email(app, client):
+	fill_db(app)
+	data = {
+		"email": "",
+		"password": "test"
+	}
+
+	rv = client.post("/login", data=data)
+	assert rv.status_code == 200
+	assert b"Email required" in rv.data
+
+def test_login_no_pass(app, client):
+	fill_db(app)
+	data = {
+		"email": "test@test.com",
+		"password": ""
+	}
+
+	rv = client.post("/login", data=data)
+	assert rv.status_code == 200
+	assert b"Password required" in rv.data
+
+def test_login_wrong_pass(app, client):
+	fill_db(app)
+	data = {
+		"email": "test@test.com",
+		"password": "yoyoyo" # Actual pass: test
+	}
+
+	rv = client.post("/login", data=data)
+	assert rv.status_code == 200
+	assert b"Incorrect username or password" in rv.data
+
+def test_login_wrong_email(app, client):
+	fill_db(app)
+	data = {
+		"email": "notest@test.com", # Email is not registered
+		"password": "test"
+	}
+
+	rv = client.post("/login", data=data)
+	assert rv.status_code == 200
+	assert b"Incorrect username or password" in rv.data
+
+def test_logout(app, client):
+	fill_db(app)
+
+	data = {
+		"email": "test@test.com",
+		"password":"test"
+	}
+
+	client.post("/login", data=data)
+
+	rv = client.get("/logout")
+	assert rv.status_code == 302
+	assert rv.headers["Location"] == "http://localhost/"
+
+	rv = client.get("/")
+	assert b"Login" in rv.data
