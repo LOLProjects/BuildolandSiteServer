@@ -2,7 +2,7 @@ import click
 from flask.cli import with_appcontext
 
 from bdl.db import init_db, get_db
-from bdl.code import valid_code, remove_code
+from bdl.code import valid_code, remove_code, add_code
 
 @click.command("init-db")
 @with_appcontext
@@ -10,17 +10,15 @@ def init_db_command():
 	init_db()
 	click.echo("Initialized the database.")
 
-# TODO: add-code should accept variadic arguments
 @click.command("add-code")
-@click.argument("codeval")
+@click.argument("codevals", nargs=-1)
 @with_appcontext
-def add_code_command(codeval):
-	db = get_db()
-	if db.execute("SELECT codeVal from code WHERE codeVal=(?)", (codeval,)).fetchone() is not None:
-		click.echo("Code already exists.")
-		return
-	db.execute("INSERT INTO code (codeVal) VALUES (?)", (codeval,))
-	db.commit()
+def add_code_command(codevals):
+	for codeval in codevals:
+		if valid_code(codeval):
+			click.echo(f"Code {codeval} already exists.")
+			return
+		add_code(codeval)
 
 @click.command("list-codes")
 @with_appcontext
