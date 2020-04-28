@@ -191,3 +191,5 @@ def test_register_email_plus(app, client):
 	assert person is not None
 	code = get_code(app, "123-456-78")
 	assert code is None
+
+# TEST: Login and logout

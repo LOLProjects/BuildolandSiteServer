@@ -3,8 +3,11 @@ from bdl.db import get_db
 
 bp = Blueprint("main", __name__, url_prefix="")
 
-# TODO: Get user_id from session before each request
 # TODO: Allow username change
+# TODO: Add a profile page
+@bp.route("/profile")
+def profile():
+	return "NOT YET DONE"
 
 @bp.route("/")
 def index():

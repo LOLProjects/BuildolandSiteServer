@@ -1,19 +1,49 @@
 import re
 import sqlite3
 from flask import Blueprint, g, session, render_template, request, redirect, flash, url_for
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 
 from bdl.db import get_db
-from bdl.user import RegisterResult, register_user
+from bdl.user import RegisterResult, register_user, get_user
 
 bp = Blueprint("auth", __name__, url_prefix="")
 
 # TODO: Add change password
 
-# TODO: Finish login
-@bp.route("/login")
+@bp.before_app_request
+def load_logged_in_user():
+	user_id = session.get("user_id", None)
+	if user_id is None:
+		g.user = None
+		return
+	g.user = get_user(id=user_id)
+
+@bp.route("/login", methods=("GET", "POST"))
 def login():
-	return render_template("auth/login.html")
+	def error(msg):
+		flash(msg)
+		return render_template("auth/login.html")
+
+	if request.method == "GET":
+		return render_template("auth/login.html")
+	email = request.form["email"].lower()
+	password = request.form["password"]
+
+	if (not email):
+		return error("Email required")
+	if (not password):
+		return error("Password is required")
+
+	user = get_user(email=email)
+	if user is None:
+		return error("Incorrect username or password")
+
+	if not check_password_hash(user.hashed_password, password):
+		return error("Incorrect username or password")
+
+	session["user_id"] = user.id
+
+	return redirect(url_for("main.index"))
 
 @bp.route("/register", methods=("GET", "POST"))
 def register():
@@ -55,3 +85,8 @@ def register():
 @bp.route("/forgotPass")
 def forgotPass():
 	return render_template("auth/forgotPass.html")
+
+@bp.route("/logout")
+def logout():
+	session.clear()
+	return redirect(url_for("main.index"))

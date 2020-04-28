@@ -7,12 +7,13 @@ from bdl.db import get_db
 from bdl.code import valid_code, remove_code
 
 class User:
-	def __init__(self, id, email, username, hashed_password, code_used=None):
+	def __init__(self, id, email, username, hashed_password, code_used=None, verified=False):
 		self.id = id
 		self.email = email
 		self.username = username
 		self.hashed_password = hashed_password
 		self.code_used = code_used
+		self.verified = verified
 
 class RegisterResult:
 	SUCCESS = 0
@@ -30,12 +31,30 @@ def new_uuid():
 		id = uuid4()
 	return id
 
-def get_user_row_by_username(username):
+def get_user(id=None, email=None, username=None):
 	db = get_db()
-	return db.execute("SELECT * FROM user WHERE username=?", (username,)).fetchone()
+	user_row = None
+	if id is None:
+		if email is None:
+			if username is None:
+				return None
+			else:
+				user_row = db.execute("SELECT * FROM user WHERE username=?", (username,)).fetchone()
+		else:
+			user_row = db.execute("SELECT * FROM user WHERE email=?", (email,)).fetchone()
+	else:
+		user_row = db.execute("SELECT * FROM user WHERE id=?", (id,)).fetchone()
+
+	return User(
+		user_row["id"],
+		user_row["email"],
+		user_row["username"],
+		user_row["password"],
+		user_row["code_used"],
+		user_row["verified"]) if user_row else None
 
 def unique_username(username):
-	return get_user_row_by_username(username) is None
+	return get_user(username=username) is None
 
 # This is different than verifying the email
 def valid_email(email):

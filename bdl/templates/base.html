@@ -10,8 +10,13 @@
 <body>
 	<header>
 		<a class="underline" href="{{ url_for('main.index') }}"><img id="logo" src="{{ url_for('static', filename='images/Logov2.png') }}" alt="Buildoland logo"></a>
-		<p class="underline blue"><a class="blue" href="{{ url_for('auth.login') }}">Login</a></p>
-		<p class="underline blue"><a class="blue" href="{{ url_for('auth.register') }}">Register</a></p>
+		{% if not g.user %}
+			<p class="underline blue"><a class="blue" href="{{ url_for('auth.register') }}">Register</a></p>
+			<p class="underline blue"><a class="blue" href="{{ url_for('auth.login') }}">Login</a></p>
+		{% else %}
+			<p class="underline blue"><a class="blue" href="{{ url_for('auth.logout') }}">Logout</a></p>
+			<p class="underline blue"><a class="blue" href="{{ url_for('main.profile') }}">{{ g.user.username }}</a></p>
+		{% endif %}
 	</header>
 	<div id="main" class="center">
 		<h1 id="title" class="green outline">Buildoland Alpha</h1>

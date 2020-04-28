@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 
 {% block main %}
-<!-- TODO: Login -- Add flashes
--->
 <form name="login" method="POST">
+	{% for message in get_flashed_messages() %}
+		{% if "email" in message.lower() or "password" in message.lower() %}
+			<p class="red">{{ message }}</p>
+		{% endif %}
+	{% endfor %}
 	<p>
 		<label for="email">Email</label>
 		<input name="email" type="email" placeholder="Guigui220D@example.com" required>
