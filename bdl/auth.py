@@ -32,7 +32,7 @@ def login():
 	if (not email):
 		return error("Email required")
 	if (not password):
-		return error("Password is required")
+		return error("Password required")
 
 	user = get_user(email=email)
 	if user is None:
