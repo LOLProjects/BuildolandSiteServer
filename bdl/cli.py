@@ -3,7 +3,6 @@ from flask.cli import with_appcontext
 
 from bdl.db import init_db, get_db
 from bdl.code import valid_code, remove_code
-# TODO: Add user, list users, and remove user
 
 @click.command("init-db")
 @with_appcontext
