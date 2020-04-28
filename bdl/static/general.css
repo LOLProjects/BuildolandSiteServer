@@ -38,6 +38,11 @@ p
 	font-size: 2.5em;
 }
 
+ul li
+{
+	margin-top: 10px;
+	font-size: 1em;
+}
 
 /*FONTS*/
 

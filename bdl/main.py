@@ -4,10 +4,9 @@ from bdl.db import get_db
 bp = Blueprint("main", __name__, url_prefix="")
 
 # TODO: Allow username change
-# TODO: Add a profile page
 @bp.route("/profile")
 def profile():
-	return "NOT YET DONE"
+	return render_template("main/profile.html")
 
 @bp.route("/")
 def index():

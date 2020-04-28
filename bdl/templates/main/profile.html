@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block main %}
+<h3 id="sub">Profile page</h3>
+<h2 class="green outline">Test</h2>
+<ul>
+	<li><p><a class="blue underline" href="#">Change password</a></p></li>
+	<li><p><a class="blue underline" href="#">Change username</a></p></li>
+	<li><p><a class="blue underline" href="#">Send verification email</a></p></li>
+	<li><p><a class="blue underline" href="{{ url_for('auth.logout') }}">Logout</a></p></li>
+</ul>
+{% endblock %}
