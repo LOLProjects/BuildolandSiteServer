@@ -77,7 +77,7 @@ def register_user(email, username, password, code=None):
 		return (RegisterResult.INVALID_EMAIL, None)
 
 	# TODO: Send a verification email
-	# TODO: Start a client side email server
+	# TODO: Start a test email server
 
 	if (code is not None):
 		if (not valid_code(code)):

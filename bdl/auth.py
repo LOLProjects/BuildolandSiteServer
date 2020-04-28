@@ -8,8 +8,6 @@ from bdl.user import RegisterResult, register_user, get_user
 
 bp = Blueprint("auth", __name__, url_prefix="")
 
-# TODO: Add change password
-
 @bp.before_app_request
 def load_logged_in_user():
 	user_id = session.get("user_id", None)
