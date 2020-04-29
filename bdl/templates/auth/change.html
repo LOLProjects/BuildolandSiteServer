@@ -45,7 +45,7 @@
 	</p>
 	<p id="oldpSec" class="invisible">
 		<label for="password">Old Password</label>
-		<input onChange="passChanged(this);" type="password" name="oldPass">
+		<input id="oldp" onChange="passChanged(this);" type="password" name="oldPass">
 		{% for message in get_flashed_messages() %}
 			{% if "password" in message.lower() %}
 				<p class="red">{{ message }}</p>
@@ -54,9 +54,9 @@
 	</p>
 	<p id="newpSec" class="invisible">
 		<label for="password">New Password</label>
-		<input onChange="passChanged(this);" type="password" name="newPass">
+		<input id="newp" onChange="passChanged(this);" type="password" name="newPass">
 	</p>
-	<p><a id="passBtn" class="blue underline" onclick="showPass();" href="#">Change password</a></p>
+	<p><a id="passBtn" class="blue underline clickable" onclick="showPass();">Change password</a></p>
 	<p><input id="submit" type="submit" value="Change"></p>
 </form>
 {% endblock %}

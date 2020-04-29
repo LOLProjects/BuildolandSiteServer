@@ -111,6 +111,11 @@ ul li
 	padding: 0;
 }
 
+.clickable
+{
+	cursor: pointer;
+}
+
 /* CENTER */
 
 .center
