@@ -46,7 +46,7 @@ function validateUsername(input)
 		<input type="password" name="password" required>
 		{% for message in get_flashed_messages() %}
 			{% if "password" in message.lower() %}
-				<p class="red">Password is required</p>
+				<p class="red">{{ message }}</p>
 			{% endif %}
 		{% endfor %}
 	</p>
