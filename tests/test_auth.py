@@ -2,6 +2,7 @@ import uuid
 from flask import session, g
 from bdl.db import get_db
 import pytest
+from werkzeug.security import check_password_hash
 from conftest import fill_db
 
 def get_person(app, key, value):
@@ -13,6 +14,14 @@ def get_code(app, codeVal):
 	with app.app_context():
 		db = get_db()
 		return db.execute(f"SELECT codeVal FROM code WHERE codeVal='{codeVal}'").fetchone()
+
+def login_default(client):
+	data = {
+		"email": "test@test.com",
+		"password": "test"
+	}
+
+	client.post("/login", data=data)
 
 def test_register_normal(app, client):
 	fill_db(app)
@@ -291,4 +300,93 @@ def test_logout(app, client):
 	rv = client.get("/")
 	assert b"Login" in rv.data
 
-# TEST: Change username and password when not logged in and normal
+def test_change_normal(app, client):
+	fill_db(app)
+	data = {
+		"username": "dinglydo",
+		"oldPass": "test",
+		"newPass": "test2"
+	}
+	
+	login_default(client)
+
+	rv = client.get("/change")
+	assert rv.status_code == 200
+	assert b"Change" in rv.data
+
+
+	rv = client.post("/change", data=data)
+	assert rv.status_code == 302
+	assert "/profile" in rv.headers["Location"]
+
+	person = get_person(app, "username", "dinglydo")
+	assert person
+	assert check_password_hash(person["password"], "test2")
+
+def test_change_no_old(app, client):
+	fill_db(app)
+	data = {
+		"username": "dinglydo",
+		"oldPass": "",
+		"newPass": "test2"
+	}
+
+	login_default(client)
+
+	rv = client.post("/change", data=data)
+	assert rv.status_code == 200
+	assert b"Old password is required" in rv.data
+
+def test_change_no_new(app, client):
+	fill_db(app)
+	data = {
+		"username": "dinglydo",
+		"oldPass": "test",
+		"newPass": ""
+	}
+
+	login_default(client)
+
+	rv = client.post("/change", data=data)
+	assert rv.status_code == 200
+	assert b"New password is required" in rv.data
+
+def test_change_wrong_old(app, client):
+	fill_db(app)
+	data = {
+		"username": "dinglydo",
+		"oldPass": "wrong",
+		"newPass": "test2"
+	}
+
+	login_default(client)
+
+	rv = client.post("/change", data=data)
+	assert rv.status_code == 200
+	assert b"Incorrect password" in rv.data
+
+def test_change_no_username(app, client):
+	fill_db(app)
+	data = {
+		"username": "",
+		"oldPass": "test",
+		"newPass": "test2"
+	}
+
+	login_default(client)
+
+	rv = client.post("/change", data=data)
+	assert rv.status_code == 302
+	assert "/profile" in rv.headers["Location"]
+
+def test_change_not_logged_in(app, client):
+	fill_db(app)
+	data = {
+		"username": "dinglydo",
+		"oldPass": "test",
+		"newPass": "test2"
+	}
+
+	rv = client.post("/change", data=data)
+	assert rv.status_code == 302
+	assert "/login" in rv.headers["Location"]
