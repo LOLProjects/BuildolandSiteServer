@@ -107,5 +107,7 @@ def change_user(user, username="", password=""):
 	if (not username):
 		username = g.user.username
 
+	# TODO: Email user about the change
+
 	db.execute("UPDATE user SET username=?, password=? WHERE id=?", (username, password, user.id))
 	db.commit()
