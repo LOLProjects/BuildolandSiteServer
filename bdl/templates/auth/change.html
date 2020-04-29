@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block main %}
-<script>
+<script type="text/javascript" src="{{ url_for('static', filename='validation.js') }}"></script>
+<script type="text/javascript">
 	let shown = false;
 	function showPass()
 	{
@@ -20,12 +21,22 @@
 			shown = false;
 		}
 	}
+
+	function passChanged(input)
+	{
+		let field;
+		if (input.id == "newp")
+			field = document.getElementById("oldp");
+		else
+			field = document.getElementById("newp");
+		field.required = (input.value != "");
+	}
 </script>
 <h3 id="sub">Change Account Details</h3>
 <form name="register" method="POST">
 	<p>
 		<label for="username">Username</label>
-		<input id="username" oninvalid="validateUsername(this)" pattern="[0-9A-Za-z-_]+" maxlength="16" name="username" placeholder="{{ g.user.username }}" autofocus>
+		<input id="username" oninvalid="validateUsername(this)" pattern="^[_0-9A-Za-z-]+$" maxlength="16" name="username" placeholder="{{ g.user.username }}" autofocus>
 		{% for message in get_flashed_messages() %}
 			{% if "username" in message.lower() %}
 				<p class="red">{{ message }}</p>
@@ -36,7 +47,7 @@
 		<label for="password">Old Password</label>
 		<input onChange="passChanged(this);" type="password" name="oldPass">
 		{% for message in get_flashed_messages() %}
-			{% if "old" in message.lower() %}
+			{% if "password" in message.lower() %}
 				<p class="red">{{ message }}</p>
 			{% endif %}
 		{% endfor %}
@@ -44,11 +55,6 @@
 	<p id="newpSec" class="invisible">
 		<label for="password">New Password</label>
 		<input onChange="passChanged(this);" type="password" name="newPass">
-		{% for message in get_flashed_messages() %}
-			{% if "new" in message.lower() %}
-				<p class="red">{{ message }}</p>
-			{% endif %}
-		{% endfor %}
 	</p>
 	<p><a id="passBtn" class="blue underline" onclick="showPass();" href="#">Change password</a></p>
 	<p><input id="submit" type="submit" value="Change"></p>
