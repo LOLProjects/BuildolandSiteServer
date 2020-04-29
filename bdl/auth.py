@@ -105,7 +105,6 @@ def logout():
 	return redirect(url_for("main.index"))
 
 # TODO: Change email address, after verif is done
-# TODO: Make login required
 @bp.route("/change", methods=("GET", "POST"))
 @login_required
 def change():
