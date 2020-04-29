@@ -38,6 +38,24 @@ def test_register_normal(app, client):
 	assert person["username"] == "person"
 	assert session["user_id"]== person["id"]
 
+@pytest.mark.parametrize("username", ["person man", "person;man", "person\\ man"])
+def test_register_wrong_username(username, app, client):
+	fill_db(app)
+	data = {
+		"code": "123-456-78",
+		"username": username,
+		"email": "test2@test.com",
+		"password": "person"
+	}
+
+	rv = client.post("/register", data=data)
+	assert rv.status_code == 200
+	assert b"Invalid username" in rv.data
+
+	person = get_person(app, "email", "test2@test.com")
+	assert not person
+	assert get_code(app, "123-456-78")
+
 def test_register_wrong_code(app, client):
 	fill_db(app)
 	data = {
@@ -62,7 +80,7 @@ def test_register_no_code(app, client):
 	"password": "person"}
 
 	rv = client.post("/register", data=data)
-	assert b"Invalid" in rv.data
+	assert b"Code is required" in rv.data
 
 	# User shan't be registered
 	person = get_person(app, "username", "person")
@@ -221,7 +239,7 @@ def test_login_no_email(app, client):
 
 	rv = client.post("/login", data=data)
 	assert rv.status_code == 200
-	assert b"Email required" in rv.data
+	assert b"Email is required" in rv.data
 
 def test_login_no_pass(app, client):
 	fill_db(app)
@@ -232,7 +250,7 @@ def test_login_no_pass(app, client):
 
 	rv = client.post("/login", data=data)
 	assert rv.status_code == 200
-	assert b"Password required" in rv.data
+	assert b"Password is required" in rv.data
 
 def test_login_wrong_pass(app, client):
 	fill_db(app)
@@ -272,3 +290,5 @@ def test_logout(app, client):
 
 	rv = client.get("/")
 	assert b"Login" in rv.data
+
+# TEST: Change username and password when not logged in and normal
