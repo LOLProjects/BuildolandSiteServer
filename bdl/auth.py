@@ -4,7 +4,7 @@ from flask import Blueprint, g, session, render_template, request, redirect, fla
 from werkzeug.security import check_password_hash
 
 from bdl.db import get_db
-from bdl.user import RegisterResult, register_user, get_user
+from bdl.user import RegisterResult, register_user, get_user, change_user, valid_username
 
 bp = Blueprint("auth", __name__, url_prefix="")
 
@@ -28,9 +28,9 @@ def login():
 	password = request.form["password"]
 
 	if (not email):
-		return error("Email required")
+		return error("Email is required")
 	if (not password):
-		return error("Password required")
+		return error("Password is required")
 
 	user = get_user(email=email)
 	if user is None:
@@ -57,6 +57,9 @@ def register():
 	email = request.form["email"].lower()
 
 	# Check for empty values
+	if (not code):
+		return error("Code is required")
+
 	if (not username):
 		return error("Username is required")
 
@@ -73,6 +76,8 @@ def register():
 		return error("Invalid email")
 	if (errorCode == RegisterResult.INVALID_CODE):
 		return error("Invalid code")
+	if (errorCode == RegisterResult.INVALID_USERNAME):
+		return error("Invalid username")
 
 	# Save cookie
 	session["user_id"] = user.id
@@ -88,3 +93,35 @@ def forgotPass():
 def logout():
 	session.clear()
 	return redirect(url_for("main.index"))
+
+# TODO: Change email address, after verif is done
+# TODO: Make login required
+@bp.route("/change", methods=("GET", "POST"))
+def change():
+	def error(message):
+		flash(message)
+		return render_template("auth/change.html")
+
+	if request.method == "GET":
+		return render_template("auth/change.html")
+
+	username = request.form["username"]
+	oldPass = request.form["oldPass"]
+	newPass = request.form["newPass"]
+
+	if (username and not valid_username(username)):
+		return error("Invalid username")
+
+	if (newPass or oldPass):
+		if (not newPass):
+			return error("New password is required")
+
+		if (not oldPass):
+			return error("Old password is required")
+
+		if (not check_password_hash(g.user.hashed_password, oldPass)):
+			return error("Incorrect password")
+
+	change_user(g.user, username, newPass)
+	return redirect(url_for("main.profile"))
+
