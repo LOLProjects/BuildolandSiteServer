@@ -1,5 +1,6 @@
 import re
 import sqlite3
+from functools import wraps
 from flask import Blueprint, g, session, render_template, request, redirect, flash, url_for
 from werkzeug.security import check_password_hash
 
@@ -15,6 +16,15 @@ def load_logged_in_user():
 		g.user = None
 		return
 	g.user = get_user(id=user_id)
+
+def login_required(f):
+	@wraps(f)
+	def wrapper():
+		if (g.get("user")):
+			return f()
+		else:
+			return redirect(url_for("auth.login"))
+	return wrapper
 
 @bp.route("/login", methods=("GET", "POST"))
 def login():
@@ -97,6 +107,7 @@ def logout():
 # TODO: Change email address, after verif is done
 # TODO: Make login required
 @bp.route("/change", methods=("GET", "POST"))
+@login_required
 def change():
 	def error(message):
 		flash(message)

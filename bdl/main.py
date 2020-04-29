@@ -1,10 +1,13 @@
 from flask import Blueprint, render_template
+
 from bdl.db import get_db
+from bdl.auth import login_required
 
 bp = Blueprint("main", __name__, url_prefix="")
 
 # TODO: Email verificaiton!!
 @bp.route("/profile")
+@login_required
 def profile():
 	return render_template("main/profile.html")
 
