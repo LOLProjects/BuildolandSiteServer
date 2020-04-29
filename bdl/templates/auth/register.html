@@ -1,18 +1,8 @@
 {% extends "base.html" %}
 
 {% block main %}
-<script type="text/javascript">
-// TODO: Add client side email checking
-function validateUsername(input)
-{
-	if (input.value.includes(" "))
-		input.setCustomValidity("Spaces aren't allowed")
-	else if (!input.value.match("[_0-9A-Za-z-]*"))
-		input.setCustomValidity("Only numbers, letters, underscores, and dashes are allowed")
-	else
-		input.setCustomValidity("")		
-}
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='validation.js') }}"></script>
+<h3 id="sub">Register (<a class="blue" href="{{ url_for('auth.login') }}">Have an account?</a>)</h3>
 <form name="register" method="POST">
 	<p>
 		<label for="code">Code</label>
@@ -34,7 +24,7 @@ function validateUsername(input)
 	</p>
 	<p>
 		<label for="username">Username</label>
-		<input id="username" oninvalid="validateUsername(this)" pattern="[0-9A-Za-z-_]+" maxlength="16" name="username" placeholder="Guigui220D" required>
+		<input id="username" oninvalid="validateUsername(this)" pattern="^[_0-9A-Za-z-]+$" maxlength="16" name="username" placeholder="Guigui220D" required>
 		{% for message in get_flashed_messages() %}
 			{% if "username" in message.lower() %}
 				<p class="red">{{ message }}</p>
