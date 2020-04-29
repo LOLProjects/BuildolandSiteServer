@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block main %}
+<script>
+	let shown = false;
+	function showPass()
+	{
+		if (!shown)
+		{
+			document.getElementById("passBtn").innerHTML = "Hide";
+			document.getElementById("newpSec").className = "";
+			document.getElementById("oldpSec").className = "";
+			shown = true;
+		}
+		else
+		{
+			document.getElementById("passBtn").innerHTML = "Change password";
+			document.getElementById("newpSec").className = "invisible";
+			document.getElementById("oldpSec").className = "invisible";
+			shown = false;
+		}
+	}
+</script>
+<h3 id="sub">Change Account Details</h3>
+<form name="register" method="POST">
+	<p>
+		<label for="username">Username</label>
+		<input id="username" oninvalid="validateUsername(this)" pattern="[0-9A-Za-z-_]+" maxlength="16" name="username" placeholder="{{ g.user.username }}" autofocus>
+		{% for message in get_flashed_messages() %}
+			{% if "username" in message.lower() %}
+				<p class="red">{{ message }}</p>
+			{% endif %}
+		{% endfor %}
+	</p>
+	<p id="oldpSec" class="invisible">
+		<label for="password">Old Password</label>
+		<input onChange="passChanged(this);" type="password" name="oldPass">
+		{% for message in get_flashed_messages() %}
+			{% if "old" in message.lower() %}
+				<p class="red">{{ message }}</p>
+			{% endif %}
+		{% endfor %}
+	</p>
+	<p id="newpSec" class="invisible">
+		<label for="password">New Password</label>
+		<input onChange="passChanged(this);" type="password" name="newPass">
+		{% for message in get_flashed_messages() %}
+			{% if "new" in message.lower() %}
+				<p class="red">{{ message }}</p>
+			{% endif %}
+		{% endfor %}
+	</p>
+	<p><a id="passBtn" class="blue underline" onclick="showPass();" href="#">Change password</a></p>
+	<p><input id="submit" type="submit" value="Change"></p>
+</form>
+{% endblock %}
