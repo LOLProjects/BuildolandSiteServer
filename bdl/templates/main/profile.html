@@ -2,7 +2,7 @@
 
 {% block main %}
 <h3 id="sub">Profile page</h3>
-<h2 class="green outline">Test</h2>
+<h2 class="green outline">{{ g.user.username }}</h2>
 <ul>
 	<li><p><a class="blue underline" href="{{ url_for('auth.change') }}">Change account info</a></p></li>
 	<li><p><a class="blue underline" href="#">Send verification email</a></p></li>
