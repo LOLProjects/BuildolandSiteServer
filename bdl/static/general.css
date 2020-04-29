@@ -102,6 +102,15 @@ ul li
 	1px 1px 0 #000;
 }
 
+.invisible
+{
+	visibility: hidden;
+	width: 0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+}
+
 /* CENTER */
 
 .center
