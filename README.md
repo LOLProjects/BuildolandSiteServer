@@ -20,3 +20,10 @@ I believe it's good to document why certain design choices were made, so that we
 Accounts on the site mainly exist for one very important reason. The game is not going to be free. Having an account allows players to redownload the game without repurchasing it. Ok, but what do we need verification for?
 
 Verification exists for two reasons. One, it disallows a player to use an email that's not his, removing the ability to block others from making their own accounts. It also exists to ensure that the email is valid, since there's no other reliable way to check. If the email was invalid but registered, it could be changed by the user before it becomes a problem. As a bonus it also ensures that the game is being bought by a human instead of a bot, however, if a bot is interested in giving a few bucks, please email me at amrojjeh@gmail.com.
+
+
+## Verification
+Here's how verificaiton is done:
+1. User makes an account, server sends an email
+2. User clicks on the link provided by the email, which should look like: www.buildoland.com/verify/id=125125215871248
+3. If user is logged in, and the id is the same as the logged in user, then that would be verified, otherwise nothing changes
