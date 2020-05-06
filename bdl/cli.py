@@ -19,6 +19,7 @@ def add_code_command(codevals):
 			click.echo(f"Code {codeval} already exists.")
 			return
 		add_code(codeval)
+		click.echo(f"{codeval} added")
 
 @click.command("list-codes")
 @with_appcontext
