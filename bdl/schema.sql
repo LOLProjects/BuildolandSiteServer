@@ -7,7 +7,8 @@ CREATE TABLE user(
 	username TEXT UNIQUE NOT NULL,
 	password TEXT NOT NULL,
 	code_used TEXT,
-	verified INT
+	verified INT,
+	verif_token BLOB(16)
 );
 
 CREATE TABLE code(
