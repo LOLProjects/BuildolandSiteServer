@@ -23,18 +23,18 @@ def load_logged_in_user():
 		return
 	g.user = get_user(id=user_id)
 
-# TODO: Redirect to old url with the same parameters
 def login_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwds):
 		if (g.get("user")):
 			return f(*args, **kwds)
 		else:
-			return redirect(url_for("auth.login"))
+			return redirect(url_for("auth.login", path=request.path))
 	return wrapper
 
-@bp.route("/login", methods=("GET", "POST"))
-def login():
+@bp.route("/login", defaults={"path":""})
+@bp.route("/login/<path:path>", methods=("GET", "POST"))
+def login(path):
 	def error(msg):
 		flash(msg, "error")
 		return render_template("auth/login.html")
@@ -57,6 +57,9 @@ def login():
 		return error("Incorrect email or password")
 
 	session["user_id"] = user.id
+
+	if path:
+		return redirect("/" + path)
 
 	return redirect(url_for("main.index"))
 
@@ -114,8 +117,6 @@ def logout():
 	return redirect(url_for("main.index"))
 
 # TODO: Change email address, after verif is done
-# TODO: Refactor change here and in user.py
-# TODO: Check if username is unique
 @bp.route("/change", methods=("GET", "POST"))
 @login_required
 def change():
