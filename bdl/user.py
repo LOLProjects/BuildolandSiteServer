@@ -105,8 +105,8 @@ def register_user(email, username, password, code=""):
 	return (RegisterResult.SUCCESS, user)
 
 # TODO: Remove user, but only if unverified
-# TODO: Add verification flashes
 
+# TODO: Check if username/email is unique
 def change_user(user, username="", password="", verified=0):
 	db = get_db()
 	if (password):

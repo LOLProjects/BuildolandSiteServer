@@ -150,6 +150,8 @@ def change():
 @bp.route("/verify/<token>")
 @login_required
 def verify(token):
+	if g.user.verified:
+		return redirect(url_for("main.index"))
 	if urlsafe_b64encode(g.user.verif_token) != token.encode():
 		flash("Could not verify, please login to the correct account before verifying", "error")
 	else:
