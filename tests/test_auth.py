@@ -147,6 +147,24 @@ def test_register_invalid_email(app, client):
 	code = get_code(app, "123-456-78")
 	assert code is not None
 
+def test_register_dup_email(app, client):
+	fill_db(app)
+	data = {
+	"code": "123-456-78",
+	"username": "person",
+	"email": "test@test.com",
+	"password": "person"}
+
+	rv = client.post("/register", data=data)
+	assert b"Email taken" in rv.data
+
+	# User shan't be registered
+	# Code shouldn't be deleted
+	person = get_person(app, "email", "amrojjeh@gmail")
+	assert not person
+	code = get_code(app, "123-456-78")
+	assert code
+
 def test_register_invalid_email(app, client):
 	fill_db(app)
 	data = {

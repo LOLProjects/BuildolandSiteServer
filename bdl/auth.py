@@ -1,7 +1,7 @@
 import re
 import sqlite3
 from functools import wraps
-from base64 import b64encode
+from base64 import urlsafe_b64encode
 
 from flask import Blueprint, g, session, render_template, request, redirect, flash, url_for
 from werkzeug.security import check_password_hash
@@ -91,6 +91,8 @@ def register():
 	errorCode, user = register_user(email, username, password, code)
 	if (errorCode == RegisterResult.USERNAME_TAKEN):
 		return error("Username taken")
+	if (errorCode == RegisterResult.EMAIL_TAKEN):
+		return error("Email taken")
 	if (errorCode == RegisterResult.INVALID_EMAIL):
 		return error("Invalid email")
 	if (errorCode == RegisterResult.INVALID_CODE):
@@ -145,13 +147,11 @@ def change():
 	change_user(g.user, username, newPass)
 	return redirect(url_for("main.profile"))
 
-# TODO: Process link given in email
 @bp.route("/verify/<token>")
 @login_required
 def verify(token):
-	print(b64encode(g.user.verif_token) != token.encode())
-	if b64encode(g.user.verif_token) != token.encode():
-		flash("Could not flash token", "error")
+	if urlsafe_b64encode(g.user.verif_token) != token.encode():
+		flash("Could not verify, please login to the correct account before verifying", "error")
 	else:
 		change_user(g.user, verified=1)
 		flash("You've been verified!", "success")
