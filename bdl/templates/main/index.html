@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block main %}
+{% for msg in get_flashed_messages() %}
+	{% if "sent" in msg %}
+		<p class="green outline">Verification has been sent to your email</p>
+	{% endif %}
+{% endfor %}
+
 <h3 id="sub" class="underline blue"><a class="blue" href="#">Download here</a></h3>
 <h2 class="green outline">About</h2>
 <p class="black">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod

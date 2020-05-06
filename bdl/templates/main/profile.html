@@ -5,7 +5,13 @@
 <h2 class="green outline">{{ g.user.username }}</h2>
 <ul>
 	<li><p><a class="blue underline" href="{{ url_for('auth.change') }}">Change account info</a></p></li>
-	<li><p><a class="blue underline" href="#">Send verification email</a></p></li>
+	{% with msgs = get_flashed_messages() %}
+		{% if msgs %}
+			<li><p><a class="blue">Verification Sent</a></p></li>
+		{% elif not g.user.verified %}
+			<li><p><a class="blue underline" href="{{ url_for('auth.send_verif') }}">Send verification email</a></p></li>
+		{% endif %}
+	{% endwith %}
 	<li><p><a class="blue underline" href="{{ url_for('auth.logout') }}">Logout</a></p></li>
 </ul>
 {% endblock %}
