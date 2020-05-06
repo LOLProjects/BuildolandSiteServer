@@ -1,11 +1,19 @@
 import re
 import sqlite3
 from functools import wraps
+from base64 import b64encode
+
 from flask import Blueprint, g, session, render_template, request, redirect, flash, url_for
 from werkzeug.security import check_password_hash
 
 from bdl.db import get_db
+from bdl.email import get_smtp
 from bdl.user import RegisterResult, register_user, get_user, change_user, valid_username
+from bdl.verification import send_verification
+
+# TODO: Organize flashes with categories
+# TODO: verification_required wrapper
+# FIXME: pytests are failing!
 
 bp = Blueprint("auth", __name__, url_prefix="")
 
@@ -17,11 +25,12 @@ def load_logged_in_user():
 		return
 	g.user = get_user(id=user_id)
 
+# TODO: Redirect to old url with the same parameters
 def login_required(f):
 	@wraps(f)
-	def wrapper():
+	def wrapper(*args, **kwds):
 		if (g.get("user")):
-			return f()
+			return f(*args, **kwds)
 		else:
 			return redirect(url_for("auth.login"))
 	return wrapper
@@ -53,6 +62,7 @@ def login():
 
 	return redirect(url_for("main.index"))
 
+# TODO: Accept uppercase emails
 @bp.route("/register", methods=("GET", "POST"))
 def register():
 	def error(msg):
@@ -91,8 +101,7 @@ def register():
 
 	# Save cookie
 	session["user_id"] = user.id
-
-	return redirect(url_for("main.index"))
+	return redirect(url_for("auth.send_verif"))
 
 # TODO: Finish forgot pass
 @bp.route("/forgotPass")
@@ -105,6 +114,8 @@ def logout():
 	return redirect(url_for("main.index"))
 
 # TODO: Change email address, after verif is done
+# TODO: Refactor change here and in user.py
+# TODO: Check if username is unique
 @bp.route("/change", methods=("GET", "POST"))
 @login_required
 def change():
@@ -135,3 +146,21 @@ def change():
 	change_user(g.user, username, newPass)
 	return redirect(url_for("main.profile"))
 
+# TODO: Process link given in email
+@bp.route("/verify/<token>")
+@login_required
+def verify(token):
+	print(b64encode(g.user.verif_token) != token.encode())
+	if b64encode(g.user.verif_token) != token.encode():
+		flash("Could not flash token", "error")
+	else:
+		change_user(g.user, verified=1)
+		flash("You've been verified!", "success")
+	return redirect(url_for("main.index"))
+
+@bp.route("/sendverif")
+@login_required
+def send_verif():
+	send_verification()
+	flash("Verification sent")
+	return redirect(url_for("main.profile"))

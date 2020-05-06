@@ -37,7 +37,7 @@ def test_register_normal(app, client):
 
 	rv = client.post("/register", data=data)
 	assert rv.status_code == 302
-	assert "http://localhost/" == rv.headers["Location"]
+	assert "sendverif" in rv.headers["Location"]
 	
 	code = get_code(app, "123-456-78")
 	assert code is None
@@ -176,7 +176,7 @@ def test_register_same_uuid(app, client):
 		g.test_user_id = uuid.UUID(int=get_person(app, "username", "test")["id"])
 		rv = client.post("/register", data=data)
 
-		assert "http://localhost/" == rv.headers["Location"]
+		assert "sendverif" in rv.headers["Location"]
 		
 		code = get_code(app, "123-456-78")
 		assert code is None
