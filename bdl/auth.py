@@ -158,7 +158,7 @@ def change():
 		return error("Invalid username")
 
 	if (emailChanged):
-		return redirect(url_for("auth.sendverif"))
+		return redirect(url_for("auth.send_verif"))
 
 	return redirect(url_for("main.profile"))
 

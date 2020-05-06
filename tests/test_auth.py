@@ -322,6 +322,7 @@ def test_change_normal(app, client):
 	fill_db(app)
 	data = {
 		"username": "dinglydo",
+		"email": "",
 		"oldPass": "test",
 		"newPass": "test2"
 	}
@@ -341,10 +342,30 @@ def test_change_normal(app, client):
 	assert person
 	assert check_password_hash(person["password"], "test2")
 
+def test_change_email(app, client):
+	fill_db(app)
+	data = {
+		"username": "",
+		"email": "testtest@test.com",
+		"oldPass": "",
+		"newPass": ""
+	}
+	
+	login_default(client)
+
+	rv = client.post("/change", data=data)
+	assert rv.status_code == 302
+	assert "/sendverif" in rv.headers["Location"]
+
+	person = get_person(app, "email", "testtest@test.com")
+	assert person
+	assert person["username"] == "test"
+
 def test_change_no_old(app, client):
 	fill_db(app)
 	data = {
 		"username": "dinglydo",
+		"email": "",
 		"oldPass": "",
 		"newPass": "test2"
 	}
@@ -359,6 +380,7 @@ def test_change_no_new(app, client):
 	fill_db(app)
 	data = {
 		"username": "dinglydo",
+		"email": "",
 		"oldPass": "test",
 		"newPass": ""
 	}
@@ -373,6 +395,7 @@ def test_change_wrong_old(app, client):
 	fill_db(app)
 	data = {
 		"username": "dinglydo",
+		"email": "",
 		"oldPass": "wrong",
 		"newPass": "test2"
 	}
@@ -387,6 +410,7 @@ def test_change_no_username(app, client):
 	fill_db(app)
 	data = {
 		"username": "",
+		"email": "",
 		"oldPass": "test",
 		"newPass": "test2"
 	}
@@ -401,6 +425,7 @@ def test_change_not_logged_in(app, client):
 	fill_db(app)
 	data = {
 		"username": "dinglydo",
+		"email": "",
 		"oldPass": "test",
 		"newPass": "test2"
 	}
