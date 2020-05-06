@@ -4,6 +4,7 @@ from flask import Flask
 
 
 # TODO: Update colors and background
+# TODO: Add auth system for the actual game
 
 def create_app(test_config=None):
 	app = Flask(__name__, instance_relative_config=True)
