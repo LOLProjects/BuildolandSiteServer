@@ -5,15 +5,17 @@ from werkzeug.security import generate_password_hash
 
 from bdl.db import get_db
 from bdl.code import valid_code, remove_code
+from bdl.verification import send_verification
 
 class User:
-	def __init__(self, id, email, username, hashed_password, code_used=None, verified=False):
+	def __init__(self, id, email, username, hashed_password, code_used=None, verified=0, verif_token=None):
 		self.id = id
 		self.email = email
 		self.username = username
 		self.hashed_password = hashed_password
 		self.code_used = code_used
 		self.verified = verified
+		self.verif_token = verif_token
 
 class RegisterResult:
 	SUCCESS = 0
@@ -52,7 +54,8 @@ def get_user(id=None, email=None, username=None):
 		user_row["username"],
 		user_row["password"],
 		user_row["code_used"],
-		user_row["verified"]) if user_row else None
+		user_row["verified"],
+		user_row["verif_token"]) if user_row else None
 
 def unique_username(username):
 	return get_user(username=username) is None
@@ -66,11 +69,12 @@ def valid_username(username):
 
 def add_user(email, username, hashed_password, code_used=None):
 	user_id = new_uuid().bytes
+	verif_token = new_uuid().bytes
 	db = get_db()
-	db.execute("INSERT INTO user (id, email, username, password, code_used) VALUES (?, ?, ?, ?, ?)",
-		(user_id, email, username, hashed_password, code_used))
+	db.execute("INSERT INTO user (id, email, username, password, code_used, verified, verif_token) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		(user_id, email, username, hashed_password, code_used, 0, verif_token))
 	db.commit()
-	return User(user_id, email, username, hashed_password, code_used)
+	return User(user_id, email, username, hashed_password, code_used, 0, verif_token)
 
 def register_user(email, username, password, code=""):
 	"""Registers the user, returns (errorCode, user)"""
@@ -84,9 +88,6 @@ def register_user(email, username, password, code=""):
 	if (not valid_email(email)):
 		return (RegisterResult.INVALID_EMAIL, None)
 
-	# TODO: Send a verification email
-	# TODO: Start a test email server
-
 	if (code):
 		if (not valid_code(code)):
 			return (RegisterResult.INVALID_CODE, None)
@@ -97,7 +98,10 @@ def register_user(email, username, password, code=""):
 	user = add_user(email, username, hashed_password, code)
 	return (RegisterResult.SUCCESS, user)
 
-def change_user(user, username="", password=""):
+# TODO: Remove user, but only if unverified
+# TODO: Add verification flashes
+
+def change_user(user, username="", password="", verified=0):
 	db = get_db()
 	if (password):
 		password = generate_password_hash(password)
@@ -105,9 +109,12 @@ def change_user(user, username="", password=""):
 		password = user.hashed_password
 
 	if (not username):
-		username = g.user.username
+		username = user.username
 
 	# TODO: Email user about the change
 
-	db.execute("UPDATE user SET username=?, password=? WHERE id=?", (username, password, user.id))
+	db.execute("UPDATE user SET username=?, password=?, verified=? WHERE id=?", (username, password, verified, user.id))
 	db.commit()
+	user.username = username
+	user.password = password
+	user.verified = verified
