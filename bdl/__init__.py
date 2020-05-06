@@ -1,9 +1,9 @@
 import os
-import colorama
 
 from flask import Flask
 
-colorama.init()
+
+# TODO: Update colors and background
 
 def create_app(test_config=None):
 	app = Flask(__name__, instance_relative_config=True)
@@ -22,7 +22,6 @@ def create_app(test_config=None):
 	except OSError:
 		pass
 
-	# print(colorama.Fore.RED + "Secret: " + app.config["SECRET_KEY"] + colorama.Style.RESET_ALL)
 
 	# Add blueprints
 
@@ -38,7 +37,13 @@ def create_app(test_config=None):
 	return app
 
 def init_app(app):
-	from . import db
 	from . import cli
-	app.teardown_appcontext(db.close_db)
+	app.teardown_appcontext(teardown_appcontext)
 	cli.add_commands(app.cli)
+
+def teardown_appcontext(e=None):
+	from . import db
+	from . import email
+	db.close_db()
+	email.close_smtp()
+
