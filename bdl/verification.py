@@ -4,7 +4,6 @@ from base64 import urlsafe_b64encode
 from flask import g, current_app, url_for, request
 from bdl.email import get_smtp
 
-# TODO: Get an actual email service with an actual address
 def send_verification():
 	msg = EmailMessage()
 	msg["Subject"] = "Buildoland Verification"

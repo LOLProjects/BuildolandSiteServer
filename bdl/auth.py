@@ -116,7 +116,6 @@ def logout():
 	session.clear()
 	return redirect(url_for("main.index"))
 
-# TODO: Change email address, after verif is done
 @bp.route("/change", methods=("GET", "POST"))
 @login_required
 def change():
@@ -128,11 +127,14 @@ def change():
 		return render_template("auth/change.html")
 
 	username = request.form["username"]
+	email = request.form["email"]
 	oldPass = request.form["oldPass"]
 	newPass = request.form["newPass"]
 
-	if (username and not valid_username(username)):
-		return error("Invalid username")
+	emailChanged = email and email != g.user.email
+	# NOTE: For now, email can only be changed if it isn't verified
+	if emailChanged and g.user.verified:
+		return error("Email is verified")
 
 	if (newPass or oldPass):
 		if (not newPass):
@@ -144,7 +146,7 @@ def change():
 		if (not check_password_hash(g.user.hashed_password, oldPass)):
 			return error("Incorrect password")
 
-	error_code, _ = change_user(g.user, username, newPass)
+	error_code, _ = change_user(g.user, username, email, newPass)
 
 	if (error_code == RegisterResult.USERNAME_TAKEN):
 		return error("Username taken")
@@ -154,6 +156,9 @@ def change():
 		return error("Invalid email")
 	if (error_code == RegisterResult.INVALID_USERNAME):
 		return error("Invalid username")
+
+	if (emailChanged):
+		return redirect(url_for("auth.sendverif"))
 
 	return redirect(url_for("main.profile"))
 

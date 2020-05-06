@@ -21,6 +21,8 @@ Accounts on the site mainly exist for one very important reason. The game is not
 
 Verification exists for two reasons. One, it disallows a player to use an email that's not his, removing the ability to block others from making their own accounts. It also exists to ensure that the email is valid, since there's no other reliable way to check. If the email was invalid but registered, it could be changed by the user before it becomes a problem. As a bonus it also ensures that the game is being bought by a human instead of a bot, however, if a bot is interested in giving a few bucks, please email me at amrojjeh@gmail.com.
 
+Changing email addresses is also a big concern. For now, I've made it so that one can only change their email if it isn't verified, in the case that they mistyped their email. This prevents attackers from stealing accounts who have bought the game, as you can't buy the game until you are verified.
+
 ### Cookies
 I needn't explain why I must eat cookies, but I must explain why I use them for the site. They are used to store the user_id, so that the user doesn't have to login on every request. It might be worthwhile to spend time modifying the value just to test security.
 

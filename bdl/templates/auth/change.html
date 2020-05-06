@@ -43,6 +43,15 @@
 			{% endif %}
 		{% endfor %}
 	</p>
+	<p>
+		<label for="email">Email</label>
+		<input id="email" type="email" name="email" placeholder="{{ g.user.email }}">
+		{% for message in get_flashed_messages() %}
+			{% if "email" in message.lower() %}
+				<p class="red">{{ message }}</p>
+			{% endif %}
+		{% endfor %}
+	</p>
 	<p id="oldpSec" class="invisible">
 		<label for="password">Old Password</label>
 		<input id="oldp" onChange="passChanged(this);" type="password" name="oldPass">

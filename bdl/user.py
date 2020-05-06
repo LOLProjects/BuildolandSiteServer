@@ -5,7 +5,6 @@ from werkzeug.security import generate_password_hash
 
 from bdl.db import get_db
 from bdl.code import valid_code, remove_code
-from bdl.verification import send_verification
 
 class User:
 	def __init__(self, id, email, username, hashed_password, code_used=None, verified=0, verif_token=None):
@@ -105,27 +104,41 @@ def register_user(email, username, password, code=""):
 	user = add_user(email, username, hashed_password, code)
 	return (RegisterResult.SUCCESS, user)
 
-def change_user(user, username="", password="", verified=0):
-	db = get_db()
-	if (password):
+def change_user(user, username="", email="", password="", verified=None):
+	"""Change user details. If email gets changed, verified will automatically be 0"""
+
+	if not verified:
+		verified = g.user.verified
+
+	if password:
 		password = generate_password_hash(password)
 	else:
 		password = user.hashed_password
 
-	if (username and not valid_username(username)):
+	if username and not valid_username(username):
 		return (RegisterResult.INVALID_USERNAME, user)
 
-	if (username and not unique_username(username)):
+	if username and not unique_username(username):
 		return (RegisterResult.USERNAME_TAKEN, user)
 
-	if (not username):
+	if not username:
 		username = user.username
+
+	if email and not valid_email(email):
+		return (RegisterResult.INVALID_EMAIL, user)
+
+	if not email:
+		email = user.email
+	else:
+		verified = 0
 
 	# TODO: Email user about the change
 
-	db.execute("UPDATE user SET username=?, password=?, verified=? WHERE id=?", (username, password, verified, user.id))
+	db = get_db()
+	db.execute("UPDATE user SET username=?, email=?, password=?, verified=? WHERE id=?", (username, email, password, verified, user.id))
 	db.commit()
 	user.username = username
+	user.email = email
 	user.password = password
 	user.verified = verified
 	return (RegisterResult.SUCCESS, user)
