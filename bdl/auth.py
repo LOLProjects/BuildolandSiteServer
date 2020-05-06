@@ -32,7 +32,7 @@ def login_required(f):
 			return redirect(url_for("auth.login", path=request.path))
 	return wrapper
 
-@bp.route("/login", defaults={"path":""})
+@bp.route("/login", defaults={"path":""}, methods=("GET", "POST"))
 @bp.route("/login/<path:path>", methods=("GET", "POST"))
 def login(path):
 	def error(msg):
