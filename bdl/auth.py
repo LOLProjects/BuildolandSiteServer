@@ -13,7 +13,6 @@ from bdl.verification import send_verification
 
 # TODO: Organize flashes with categories
 # TODO: verification_required wrapper
-# FIXME: pytests are failing!
 
 bp = Blueprint("auth", __name__, url_prefix="")
 
