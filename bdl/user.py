@@ -79,6 +79,7 @@ def add_user(email, username, hashed_password, code_used=None):
 	db.commit()
 	return User(user_id, email, username, hashed_password, code_used, 0, verif_token)
 
+# TODO: Use a fixed salt
 def register_user(email, username, password, code=""):
 	"""Registers the user, returns (errorCode, user)"""
 
@@ -104,15 +105,18 @@ def register_user(email, username, password, code=""):
 	user = add_user(email, username, hashed_password, code)
 	return (RegisterResult.SUCCESS, user)
 
-# TODO: Remove user, but only if unverified
-
-# TODO: Check if username/email is unique
 def change_user(user, username="", password="", verified=0):
 	db = get_db()
 	if (password):
 		password = generate_password_hash(password)
 	else:
 		password = user.hashed_password
+
+	if (username and not valid_username(username)):
+		return (RegisterResult.INVALID_USERNAME, user)
+
+	if (username and not unique_username(username)):
+		return (RegisterResult.USERNAME_TAKEN, user)
 
 	if (not username):
 		username = user.username
@@ -124,3 +128,4 @@ def change_user(user, username="", password="", verified=0):
 	user.username = username
 	user.password = password
 	user.verified = verified
+	return (RegisterResult.SUCCESS, user)

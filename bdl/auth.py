@@ -87,16 +87,16 @@ def register():
 	if (not email):
 		return error("Email is required")
 
-	errorCode, user = register_user(email, username, password, code)
-	if (errorCode == RegisterResult.USERNAME_TAKEN):
+	error_code, user = register_user(email, username, password, code)
+	if (error_code == RegisterResult.USERNAME_TAKEN):
 		return error("Username taken")
-	if (errorCode == RegisterResult.EMAIL_TAKEN):
+	if (error_code == RegisterResult.EMAIL_TAKEN):
 		return error("Email taken")
-	if (errorCode == RegisterResult.INVALID_EMAIL):
+	if (error_code == RegisterResult.INVALID_EMAIL):
 		return error("Invalid email")
-	if (errorCode == RegisterResult.INVALID_CODE):
+	if (error_code == RegisterResult.INVALID_CODE):
 		return error("Invalid code")
-	if (errorCode == RegisterResult.INVALID_USERNAME):
+	if (error_code == RegisterResult.INVALID_USERNAME):
 		return error("Invalid username")
 
 	# Save cookie
@@ -143,7 +143,17 @@ def change():
 		if (not check_password_hash(g.user.hashed_password, oldPass)):
 			return error("Incorrect password")
 
-	change_user(g.user, username, newPass)
+	error_code, _ = change_user(g.user, username, newPass)
+
+	if (error_code == RegisterResult.USERNAME_TAKEN):
+		return error("Username taken")
+	if (error_code == RegisterResult.EMAIL_TAKEN):
+		return error("Email taken")
+	if (error_code == RegisterResult.INVALID_EMAIL):
+		return error("Invalid email")
+	if (error_code == RegisterResult.INVALID_USERNAME):
+		return error("Invalid username")
+
 	return redirect(url_for("main.profile"))
 
 @bp.route("/verify/<token>")
