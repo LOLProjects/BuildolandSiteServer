@@ -11,7 +11,6 @@ from bdl.email import get_smtp
 from bdl.user import RegisterResult, register_user, get_user, change_user, valid_username
 from bdl.verification import send_verification
 
-# TODO: Organize flashes with categories
 # TODO: verification_required wrapper
 
 bp = Blueprint("auth", __name__, url_prefix="")
@@ -37,7 +36,7 @@ def login_required(f):
 @bp.route("/login", methods=("GET", "POST"))
 def login():
 	def error(msg):
-		flash(msg)
+		flash(msg, "error")
 		return render_template("auth/login.html")
 
 	if request.method == "GET":
@@ -65,7 +64,7 @@ def login():
 @bp.route("/register", methods=("GET", "POST"))
 def register():
 	def error(msg):
-		flash(msg)
+		flash(msg, "error")
 		return render_template("auth/register.html")
 
 	if request.method == "GET":
@@ -121,7 +120,7 @@ def logout():
 @login_required
 def change():
 	def error(message):
-		flash(message)
+		flash(message, "error")
 		return render_template("auth/change.html")
 
 	if request.method == "GET":
@@ -163,5 +162,5 @@ def verify(token):
 @login_required
 def send_verif():
 	send_verification()
-	flash("Verification sent")
+	flash("Verification sent", "success")
 	return redirect(url_for("main.profile"))
