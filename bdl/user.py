@@ -20,9 +20,10 @@ class User:
 class RegisterResult:
 	SUCCESS = 0
 	USERNAME_TAKEN = 1
-	INVALID_EMAIL = 2
-	INVALID_CODE = 3
-	INVALID_USERNAME = 4
+	EMAIL_TAKEN = 2
+	INVALID_EMAIL = 3
+	INVALID_CODE = 4
+	INVALID_USERNAME = 5
 
 # generates a new UUIDv4 for a new user
 def new_uuid():
@@ -60,7 +61,9 @@ def get_user(id=None, email=None, username=None):
 def unique_username(username):
 	return get_user(username=username) is None
 
-# This is different than verifying the email
+def unique_email(email):
+	return get_user(email=email) is None
+
 def valid_email(email):
 	return re.match(r"^[_a-z0-9-]+(\.[_a-z0-9-]+)*(\+[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9]+)*\.([a-z]{2,4})$", email) is not None
 
@@ -87,6 +90,9 @@ def register_user(email, username, password, code=""):
 
 	if (not valid_email(email)):
 		return (RegisterResult.INVALID_EMAIL, None)
+
+	if (not unique_email(email)):
+		return (RegisterResult.EMAIL_TAKEN, None)
 
 	if (code):
 		if (not valid_code(code)):

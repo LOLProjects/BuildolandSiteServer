@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block main %}
-{% for msg in get_flashed_messages() %}
-	{% if "sent" in msg %}
-		<p class="green outline">Verification has been sent to your email</p>
+{% for category, msg in get_flashed_messages(with_categories=true) %}
+	{% if "verif" in msg.lower() %}
+		<p class="{% if category == 'error' %} red {% else %} green {% endif %} outline">{{ msg }}</p>
 	{% endif %}
 {% endfor %}
 
