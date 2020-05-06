@@ -35,6 +35,5 @@ There are a couple of important variables to note of. Here they are:
 - EMAIL: It is the email that is going to be used to send the verification email and other update emails. (ex: "example@gmail.com")
 - EMAIL_PASS: The password to the email.
 - SMTP: The SMTP server that's going to be used. (ex. smtp.gmail.com)
-- DNS: The base url for hosting the site. (ex. "http://localhost:5000/")
 - SECRET_KEY: The SECRET_KEY that will be used to encrypt cookies
 - DATABASE: The location of the database
