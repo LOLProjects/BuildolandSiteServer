@@ -3,11 +3,11 @@ import sqlite3
 from functools import wraps
 from base64 import urlsafe_b64encode
 
-from flask import Blueprint, g, session, render_template, request, redirect, flash, url_for
+from flask import Blueprint, g, session, render_template, request, redirect, flash, url_for, current_app
 from werkzeug.security import check_password_hash
 
 from bdl.db import get_db
-from bdl.email import get_smtp
+from bdl.email import send_email
 from bdl.user import RegisterResult, register_user, get_user, change_user, valid_username
 from bdl.verification import send_verification
 
@@ -116,6 +116,7 @@ def logout():
 	session.clear()
 	return redirect(url_for("main.index"))
 
+# TODO: On password change, change ID to log out of all devices
 @bp.route("/change", methods=("GET", "POST"))
 @login_required
 def change():
@@ -125,13 +126,17 @@ def change():
 
 	if request.method == "GET":
 		return render_template("auth/change.html")
+	oldEmail = g.user.email
 
 	username = request.form["username"]
 	email = request.form["email"]
 	oldPass = request.form["oldPass"]
 	newPass = request.form["newPass"]
 
+
 	emailChanged = email and email != g.user.email
+	usernameChanged = username and username != g.user.username
+	passChanged = newPass != oldPass
 	# NOTE: For now, email can only be changed if it isn't verified
 	if emailChanged and g.user.verified:
 		return error("Email is verified")
@@ -159,6 +164,11 @@ def change():
 
 	if (emailChanged):
 		return redirect(url_for("auth.send_verif"))
+
+	content = """
+Your buildoland account has been updated recently. If you did not intend on these changes, please contact amrojjeh@gmail.com for support and change your password immediately.
+	"""
+	send_email(oldEmail, "Buildoland Account Change", content)
 
 	return redirect(url_for("main.profile"))
 
