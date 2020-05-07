@@ -132,8 +132,6 @@ def change_user(user, username="", email="", password="", verified=None):
 	else:
 		verified = 0
 
-	# TODO: Email user about the change
-
 	db = get_db()
 	db.execute("UPDATE user SET username=?, email=?, password=?, verified=? WHERE id=?", (username, email, password, verified, user.id))
 	db.commit()
