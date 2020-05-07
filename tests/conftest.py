@@ -24,7 +24,10 @@ def app():
 	db_handle, db_path = tempfile.mkstemp()
 	app = create_app({
 		"TESTING": True,
-		"DATABASE": db_path
+		"DATABASE": db_path,
+		"EMAIL": "amrojjeh@gmail.com",
+		"EMAIL_PASS": "zbrqwwrvlidxweto",
+		"SMTP": "smtp.gmail.com"
 		})
 
 	with app.app_context():

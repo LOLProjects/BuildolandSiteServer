@@ -17,7 +17,7 @@ def get_code(app, codeVal):
 
 def login_default(client):
 	data = {
-		"email": "test@test.com",
+		"email": "testbuildolandemail@test.com",
 		"password": "test"
 	}
 
@@ -152,7 +152,7 @@ def test_register_dup_email(app, client):
 	data = {
 	"code": "123-456-78",
 	"username": "person",
-	"email": "test@test.com",
+	"email": "testbuildolandemail@test.com",
 	"password": "person"}
 
 	rv = client.post("/register", data=data)
@@ -241,7 +241,7 @@ def test_register_email_plus(app, client):
 def test_login_normal(app, client):
 	fill_db(app)
 	data = {
-		"email": "test@test.com",
+		"email": "testbuildolandemail@test.com",
 		"password":"test"
 	}
 
