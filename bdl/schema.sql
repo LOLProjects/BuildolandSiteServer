@@ -2,13 +2,13 @@ DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS code;
 
 CREATE TABLE user(
-	id BLOB(16) PRIMARY KEY NOT NULL,
+	id TEXT PRIMARY KEY NOT NULL,
 	email TEXT UNIQUE NOT NULL,
 	username TEXT UNIQUE NOT NULL,
 	password TEXT NOT NULL,
 	code_used TEXT,
 	verified INT,
-	verif_token BLOB(16)
+	verif_token TEXT
 );
 
 CREATE TABLE code(

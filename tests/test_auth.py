@@ -2,7 +2,7 @@ import uuid
 from flask import session, g
 from bdl.db import get_db
 import pytest
-from werkzeug.security import check_password_hash
+from bdl.user import check_password_hash
 from conftest import fill_db
 
 def get_person(app, key, value):
@@ -191,7 +191,7 @@ def test_register_same_uuid(app, client):
 	}
 
 	with app.app_context():
-		g.test_user_id = uuid.UUID(int=get_person(app, "username", "test")["id"])
+		g.test_user_id = uuid.UUID(int=int(get_person(app, "username", "test")["id"]))
 		rv = client.post("/register", data=data)
 
 		assert "sendverif" in rv.headers["Location"]
