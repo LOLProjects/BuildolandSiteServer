@@ -4,11 +4,10 @@ from functools import wraps
 from base64 import urlsafe_b64encode
 
 from flask import Blueprint, g, session, render_template, request, redirect, flash, url_for, current_app
-from werkzeug.security import check_password_hash
 
 from bdl.db import get_db
 from bdl.email import send_email
-from bdl.user import RegisterResult, register_user, get_user, change_user, valid_username
+from bdl.user import RegisterResult, register_user, get_user, change_user, valid_username, check_password_hash
 from bdl.verification import send_verification
 
 # TODO: verification_required wrapper

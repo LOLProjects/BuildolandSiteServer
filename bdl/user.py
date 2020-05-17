@@ -1,7 +1,8 @@
 import re
 from uuid import uuid4
-from flask import g
-from werkzeug.security import generate_password_hash
+from flask import g, current_app
+# from werkzeug.security import generate_password_hash (Removed because salt can't be specified)
+from hashlib import pbkdf2_hmac
 
 from bdl.db import get_db
 from bdl.code import valid_code, remove_code
@@ -56,6 +57,12 @@ def get_user(id=None, email=None, username=None):
 		user_row["code_used"],
 		user_row["verified"],
 		user_row["verif_token"]) if user_row else None
+
+def generate_password_hash(password):
+	return pbkdf2_hmac("sha256", password.encode(), current_app.config["SALT"], 150000).hex()
+
+def check_password_hash(phash, password):
+	return generate_password_hash(password) == phash
 
 def unique_username(username):
 	return get_user(username=username) is None
