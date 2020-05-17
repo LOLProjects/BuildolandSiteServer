@@ -11,6 +11,7 @@ def create_app(test_config=None):
 
 	app.config.from_mapping(
 		SECRET_KEY="dev",
+		SALT=b"dev",
 		DATABASE=os.path.join(app.instance_path, "db.sqlite"))
 
 	if test_config is None:
@@ -32,6 +33,9 @@ def create_app(test_config=None):
 
 	from . import auth
 	app.register_blueprint(auth.bp)
+
+	from . import gauth
+	app.register_blueprint(gauth.bp)
 
 	init_app(app)
 
